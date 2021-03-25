@@ -17,10 +17,10 @@ UV Curing Station designed to be used with a SLA / Resin 3D Printer.
 - 1x [2x16 LCD + IC2 Module](https://www.amazon.com/JANSANE-Arduino-Display-Interface-Raspberry/dp/B07D83DY17/ref=sr_1_4?dchild=1&keywords=2x16+lcd&qid=1616707167&s=electronics&sr=1-4)
 - ~60x [Dupont Wire](https://www.amazon.com/Elegoo-EL-CP-004-Multicolored-Breadboard-arduino/dp/B01EV70C78/ref=sr_1_4?dchild=1&keywords=dupont+wire&qid=1616707323&sr=8-4)
 - 1m [Wire](https://www.amazon.com/Gauge-Wire-Solid-Hookup-Wires/dp/B082VY9FRB/ref=sr_1_5?dchild=1&keywords=wire&qid=1616707382&sr=8-5&th=1)
-- 1x 3D Printed Enclosure (See [/models](https://github.com/Wurmatron/UV-Curing-Station/models))
-- 1x 3D Printed Panel (see [/models](https://github.com/Wurmatron/UV-Curing-Station/models))
-- 3x 3D Printed Hinge (see [ThingVerse](https://www.thingiverse.com/thing:1096475)
-- 1x 3D Printed Door Handle (see [ThingVerse](https://www.thingiverse.com/thing:2779081)
+- 1x 3D Printed Enclosure (See [/models](https://github.com/Wurmatron/UV-Curing-Station/tree/master/models))
+- 1x 3D Printed Panel (see [/models](https://github.com/Wurmatron/UV-Curing-Station/tree/master/models))
+- 3x 3D Printed Hinge (see [Thingiverse](https://www.thingiverse.com/thing:1096475))
+- 1x 3D Printed Door Handle (see [Thingiverse](https://www.thingiverse.com/thing:2779081))
 
 ## Features
 
