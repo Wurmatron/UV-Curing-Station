@@ -10,6 +10,7 @@
 ![](https://i.imgur.com/5bLqbng.png)
 
 ## Disk Motor Adaptor[disk_adaptor.stl]https://github.com/Wurmatron/UV-Curing-Station/blob/master/models/disk_adaptor.stl)
+![](https://i.imgur.com/kZvHiUP.png)
 
 ## Door Handle [Thingiverse](https://www.thingiverse.com/thing:2779081)
 ![](https://i.imgur.com/5UKjzAX.png)
