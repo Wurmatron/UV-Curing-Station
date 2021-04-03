@@ -1,6 +1,11 @@
+/**
+*	UV Curing Station
+*	created by Wurmatron
+**/
 // Libs
 #include "Wire.h"
 #include "LiquidCrystal_I2C.h"
+#include <avr/sleep.h>
 
 // Pinout
 const int uvGate = 10;    // N-Channel Mosfet
@@ -20,12 +25,14 @@ const int led_green = 6;
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x3F,20,4); // 0x27
 
 // Defaults
-const long presets[] = {3 * 60000, 5 * 60000, 10 * 10000};  // Time in MS
-const int presetLen = 3;  // Amount of presets
+const long presets[] = {3 * 60000, 5 * 60000, 10 * 60000, 15 * 60000};  // Time in MS
+const int presetLen = 4;  // Amount of presets
 const long pollRate = 20;   // How often to update everything
 const int lcdUpdateRate = 10; // pollRate * lcdUpdateRate is time in ms
 const long errorTime = 2000; // How long an error should be displayed for
 const long timerStepIncrement = 5000;  // 5 seconds
+const long inactiveSleep = (30 * 1000) / pollRate; //  30 sec
+const int displayInactive = (10 * 1000) / pollRate; // 10 sec
 
 // Current vals
 int running = 0;
@@ -37,17 +44,19 @@ long secs = 0;
 long min = 0;
 long sec = 0;
 int lcdUpdate = 0;
+long inactiveCount = 0;
+int isSleeping = 0;
 
 // Configure Pins, LCD, Serial
 void setup() {
   // LCD setup
   lcd.begin();
   // Button setup
-  pinMode(button_stop, INPUT);
-  pinMode(button_leftA, INPUT);
-  pinMode(button_leftB, INPUT);
-  pinMode(button_rightA, INPUT);
-  pinMode(button_rightB, INPUT);
+  pinMode(button_stop, INPUT_PULLUP);
+  pinMode(button_leftA, INPUT_PULLUP);
+  pinMode(button_leftB, INPUT_PULLUP);
+  pinMode(button_rightA, INPUT_PULLUP);
+  pinMode(button_rightB, INPUT_PULLUP);
   // LED setup
   pinMode(led_red, OUTPUT);
   pinMode(led_blue, OUTPUT);
@@ -74,13 +83,32 @@ void loop() {
     handleLeftButtons();
   }
 
+  // Station Logic
+  handleMosfet(uvGate);
+  handleMosfet(motorGate);
+  checkForSleep();
+
   // Display Logic
   updateLEDStatus();
   if(errorTimeout == 0) {
     updateTimer();
     updateLEDStatus();
-    if(running)
+    if(running) {
       currentTime -= pollRate;
+      if(currentTime < 0) // Prevent Below 0
+       currentTime = 0;
+      if(currentTime == 0) { // Pause once completed
+        running = false;
+        digitalWrite(led_blue, HIGH);
+      }
+    } else {
+        if(!isSleeping)
+          inactiveCount += 1;
+        if(inactiveCount > displayInactive) {
+          lcd.clear();
+          lcd.print("Inactive: " + String(inactiveCount/(1000 / pollRate)));
+        }
+    }
   } else {
     errorTimeout -= pollRate;
   }
@@ -94,6 +122,8 @@ int buttonPressed(uint8_t button) {
   uint8_t state = digitalRead(button);
   if (state != ((lastStates >> button) & 1)) {
     lastStates ^= 1 << button;
+    if(state == HIGH)
+       inactiveCount = 0;
     return state == HIGH;
   }
   return false;
@@ -113,10 +143,10 @@ void toggleRunning() {
 
 // Handles the right side of the panel (Add, Sub) from timer
 void handleRightButtons() {
-  if(buttonPressed(button_rightA)) { // Add to timer
+  if(buttonPressed(button_rightA)) { // Sub to timer
       currentTime -= timerStepIncrement;
   }
-  if(buttonPressed(button_rightA)) { // Sub from timer
+  if(buttonPressed(button_rightB)) { // Add from timer
      currentTime += timerStepIncrement;
   }
 }
@@ -170,13 +200,35 @@ void updateLEDStatus() {
       digitalWrite(led_green, HIGH);
       digitalWrite(led_blue, LOW);
     } else {  // Not Running
-      digitalWrite(led_red, HIGH);
-      digitalWrite(led_green, HIGH);
-      digitalWrite(led_blue, LOW);
+      if(!isSleeping) {
+        digitalWrite(led_red, HIGH);
+        digitalWrite(led_green, HIGH);
+        digitalWrite(led_blue, LOW);
+      }
     }
   if(errorTimeout > 0) {  // Had an error, previously
     digitalWrite(led_red, HIGH);
     digitalWrite(led_green, LOW);
     digitalWrite(led_blue, LOW);
+  }
+}
+ 
+void handleMosfet(int pin) {
+  if(running && currentTime > 0)
+    digitalWrite(pin, HIGH);
+  else
+    digitalWrite(pin, LOW);
+}
+
+void checkForSleep() {
+  if(inactiveCount > inactiveSleep && !running) {
+    lcd.noBacklight();
+    digitalWrite(led_red, LOW);
+    digitalWrite(led_green, LOW);
+    digitalWrite(led_blue, LOW);
+    isSleeping = 1;
+  } else {
+     lcd.backlight();
+     isSleeping = 0;
   }
 }
