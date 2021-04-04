@@ -29,6 +29,7 @@ UV Curing Station designed to be used with a SLA / Resin 3D Printer.
 - Timer based UV Curing
 - LCD / LED for displaying current status
 - Default Presets / Schedules
+- Inactive Timeout, 30s "Sleep Mode"
 
 # Circuit
 
