@@ -34,3 +34,8 @@ UV Curing Station designed to be used with a SLA / Resin 3D Printer.
 # Circuit
 
 ![Circuit](https://i.imgur.com/PJCGTzU.png)
+
+# Images
+
+![Outside](https://raw.githubusercontent.com/Wurmatron/UV-Curing-Station/master/images/outside.jpg)
+![Inside](https://raw.githubusercontent.com/Wurmatron/UV-Curing-Station/master/images/inside.jpg)
